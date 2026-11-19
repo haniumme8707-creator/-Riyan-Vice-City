@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riyan: Vice City Stories</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;600;700&display=swap');
+
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080817;color:white;
+ font-family:'Rajdhani',sans-serif;
+ min-height:100vh;
+}
+.hero{
+ min-height:100vh;padding:25px 18px;
+ display:flex;flex-direction:column;
+ justify-content:center;align-items:center;
+ text-align:center;position:relative;overflow:hidden;
+ background:
+ linear-gradient(180deg,rgba(8,8,23,.25),#080817 95%),
+ linear-gradient(135deg,#32105c,#e0448a 48%,#151b4b);
+}
+.hero:before{
+ content:"";position:absolute;inset:0;
+ background:repeating-linear-gradient(
+  0deg,transparent 0 39px,rgba(255,255,255,.06) 40px
+ );
+ pointer-events:none;
+}
+.tag{color:#ff9bd6;letter-spacing:5px;font-size:12px}
+h1{
+ font-family:Orbitron,sans-serif;
+ font-size:clamp(34px,10vw,65px);
+ line-height:1.1;margin:18px 0;
+ text-shadow:0 0 22px #ff42c8;
+}
+h1 span{color:#ff9bd6}
+.subtitle{letter-spacing:3px;color:#ddd;font-size:17px}
+button{
+ border:1px solid #ff65ca;background:#f044a0;color:white;
+ padding:14px 25px;font-family:Orbitron,sans-serif;
+ font-weight:bold;letter-spacing:1px;
+ cursor:pointer;border-radius:4px;
+ box-shadow:0 0 18px #ed3ca566;
+ margin-top:20px;
+}
+button:active{transform:scale(.97)}
+main{max-width:650px;margin:auto;padding:22px 18px 60px}
+.panel{
+ background:#141426;border:1px solid #39305a;
+ border-radius:12px;padding:20px;margin:18px 0;
+ box-shadow:0 8px 30px #0005;
+}
+h2,h3{font-family:Orbitron,sans-serif}
+h2{color:#ff8bd5;font-size:19px}
+.small{color:#aaa;font-size:14px}
+.stats{display:flex;justify-content:space-around;text-align:center}
+.stat strong{display:block;color:#ff8bd5;font:700 21px Orbitron}
+.mission{
+ border-left:3px solid #ff58bb;
+ background:#1b1930;padding:17px;
+ margin:14px 0;border-radius:5px;
+}
+.mission h3{font-size:15px;color:#ff9bd6}
+.mission p{color:#ddd;font-size:17px}
+.mission button{width:100%;font-size:11px}
+.locked{opacity:.45}
+.choice{
+ display:block;width:100%;margin:10px 0;
+ background:#24213c;border:1px solid #615080;
+ text-align:left;font-family:Rajdhani,sans-serif;
+ font-size:17px;
+}
+#game{display:none}
+#message{color:#ff9bd6;min-height:25px}
+footer{text-align:center;color:#888;padding:20px;font-size:14px}
+</style>
+</head>
+<body>
+
+<section class="hero" id="home">
+ <div class="tag">A SPECIAL EDITION • 2026</div>
+ <h1>RIYAN:<br><span>VICE CITY</span><br>STORIES</h1>
+ <p class="subtitle">ONE PLAYER. THREE MISSIONS. ONE LEGEND.</p>
+ <p>Welcome to your own world, Riyan.</p>
+ <button onclick="startGame()">START YOUR ADVENTURE →</button>
+ <p class="small">A secret world created just for you.</p>
+</section>
+
+<main id="game">
+ <div class="panel">
+  <div class="small">PLAYER PROFILE</div>
+  <h2>♛ RIYAN</h2>
+  <div class="stats">
+   <div class="stat"><strong id="done">0/3</strong><span>MISSIONS</span></div>
+   <div class="stat"><strong>01</strong><span>PLAYER</span></div>
+   <div class="stat"><strong>∞</strong><span>DREAMS</span></div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h2>YOUR STORY BEGINS</h2>
+  <p>Vice City is waiting. Complete all three missions to unlock your special reward.</p>
+ </div>
+
+ <div class="mission" id="m1">
+  <div class="small">MISSION 01 • THE DREAM</div>
+  <h3>THE GAMING DREAM 🎮</h3>
+  <p>What's your dream gaming setup?</p>
+  <button class="choice" onclick="answer(1,'PS5 + GTA 6. Obviously!')">A. PS5 + GTA 6 🔥</button>
+  <button class="choice" onclick="answer(1,'A complete gaming setup!')">B. A complete gaming setup</button>
+  <button class="choice" onclick="answer(1,'All the games in the world!')">C. Every game in the world</button>
+  <p class="small" id="r1"></p>
+ </div>
+
+ <div class="mission locked" id="m2">
+  <div class="small">MISSION 02 • THE CHOICE</div>
+  <h3>THE ULTIMATE CHALLENGE ⚡</h3>
+  <p>Choose your destination.</p>
+  <button class="choice" onclick="answer(2,'Vice City at sunset!')">A. Vice City at sunset</button>
+  <button class="choice" onclick="answer(2,'A midnight street race!')">B. A midnight street race</button>
+  <button class="choice" onclick="answer(2,'A secret luxury mansion!')">C. A secret luxury mansion</button>
+  <p class="small" id="r2"></p>
+ </div>
+
+ <div class="mission locked" id="m3">
+  <div class="small">MISSION 03 • THE FINAL TEST</div>
+  <h3>WHO MADE THIS GAME? ❤️</h3>
+  <p>Who secretly created this whole world for you?</p>
+  <button class="choice" onclick="answer(3,'Hani ❤️')">A. Hani ❤️</button>
+  <button class="choice" onclick="answer(3,'A game developer')">B. A game developer</button>
+  <button class="choice" onclick="answer(3,'Rockstar')">C. Rockstar</button>
+  <p class="small" id="r3"></p>
+ </div>
+
+ <div class="panel" id="reward" style="display:none;text-align:center">
+  <div class="tag">ALL MISSIONS COMPLETED</div>
+  <h2>🏆 YOU DID IT, RIYAN!</h2>
+  <h3 style="color:#ff9bd6">THE SECRET REWARD</h3>
+  <p style="font-size:20px;line-height:1.6">
+   You wanted a PS5 and GTA 6.<br>
+   I couldn't buy them for you today,
+   but I wanted to create a little world
+   that belongs only to you.
+  </p>
+  <p style="font-size:23px;color:#ff8bd5">You are my favourite player. ❤️</p>
+  <p>Keep dreaming. One day, may you get everything you've wished for.</p>
+  <h3>WITH LOVE, HANI</h3>
+  <p class="small">Your biggest supporter, always.</p>
+ </div>
+ <p id="message"></p>
+ <footer>RIYAN: VICE CITY STORIES • MADE WITH ❤️ BY HANI</footer>
+</main>
+
+<script>
+let completed = [];
+let answers = {};
+
+function startGame(){
+ document.getElementById('home').style.display='none';
+ document.getElementById('game').style.display='block';
+ window.scrollTo(0,0);
+}
+
+function answer(n,choice){
+ if(completed.includes(n))return;
+
+ answers[n]=choice;
+ completed.push(n);
+
+ document.getElementById('r'+n).textContent=
+ "MISSION COMPLETE ✓ Your choice: "+choice;
+
+ document.getElementById('done').textContent=
+ completed.length+"/3";
+
+ if(n<3){
+  let next=document.getElementById('m'+(n+1));
+  next.classList.remove('locked');
+  next.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('message').textContent=
+   "MISSION UNLOCKED! Keep going, player.";
+ }else{
+  document.getElementById('reward').style.display='block';
+  document.getElementById('message').textContent=
+   "ALL MISSIONS COMPLETE. LEGEND STATUS UNLOCKED!";
+  document.getElementById('reward').scrollIntoView({
+   behavior:'smooth',block:'center'
+  });
+ }
+}
+</script>
+</body>
+</html>
