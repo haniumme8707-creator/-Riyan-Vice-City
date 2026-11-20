@@ -1,196 +1,498 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Riyan: Vice City Stories</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;600;700&display=swap');
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Riyan - Vice City 3D</title>
 
+<style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#080817;color:white;
- font-family:'Rajdhani',sans-serif;
- min-height:100vh;
+ margin:0;overflow:hidden;background:#111;
+ color:white;font-family:Arial,sans-serif;
+ touch-action:none;
 }
-.hero{
- min-height:100vh;padding:25px 18px;
- display:flex;flex-direction:column;
- justify-content:center;align-items:center;
- text-align:center;position:relative;overflow:hidden;
- background:
- linear-gradient(180deg,rgba(8,8,23,.25),#080817 95%),
- linear-gradient(135deg,#32105c,#e0448a 48%,#151b4b);
+#game{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%}
+#hud{
+ position:fixed;top:0;left:0;width:100%;
+ padding:18px;pointer-events:none;
+ display:flex;justify-content:space-between;
+ text-shadow:0 2px 5px black;
 }
-.hero:before{
- content:"";position:absolute;inset:0;
- background:repeating-linear-gradient(
-  0deg,transparent 0 39px,rgba(255,255,255,.06) 40px
- );
- pointer-events:none;
+.logo{font-size:19px;font-weight:900;letter-spacing:2px}
+.logo span{color:#ff62b7}
+#mission{
+ position:fixed;top:75px;left:15px;
+ background:#080817bb;border-left:3px solid #ff5db7;
+ padding:12px 15px;max-width:250px;
+ font-size:13px;line-height:1.5;
 }
-.tag{color:#ff9bd6;letter-spacing:5px;font-size:12px}
-h1{
- font-family:Orbitron,sans-serif;
- font-size:clamp(34px,10vw,65px);
- line-height:1.1;margin:18px 0;
- text-shadow:0 0 22px #ff42c8;
+#mission strong{color:#ff79c6}
+#start{
+ position:fixed;inset:0;background:
+ linear-gradient(180deg,#160d35aa,#080817ee),
+ linear-gradient(120deg,#ed479f,#252c65);
+ display:flex;align-items:center;justify-content:center;
+ flex-direction:column;text-align:center;padding:25px;
+ z-index:10;
 }
-h1 span{color:#ff9bd6}
-.subtitle{letter-spacing:3px;color:#ddd;font-size:17px}
-button{
- border:1px solid #ff65ca;background:#f044a0;color:white;
- padding:14px 25px;font-family:Orbitron,sans-serif;
+#start h1{
+ font-size:clamp(34px,9vw,65px);
+ line-height:1.1;color:#ff8bd0;
+ text-shadow:0 0 20px #ff3bb0;
+}
+#start p{line-height:1.7;color:#eee}
+#start button,.action{
+ border:1px solid #ff7bc9;background:#e63e9b;
+ color:white;padding:15px 25px;border-radius:6px;
  font-weight:bold;letter-spacing:1px;
- cursor:pointer;border-radius:4px;
- box-shadow:0 0 18px #ed3ca566;
- margin-top:20px;
 }
-button:active{transform:scale(.97)}
-main{max-width:650px;margin:auto;padding:22px 18px 60px}
-.panel{
- background:#141426;border:1px solid #39305a;
- border-radius:12px;padding:20px;margin:18px 0;
- box-shadow:0 8px 30px #0005;
+#controls{display:none}
+#joystick{
+ position:fixed;bottom:30px;left:25px;
+ width:125px;height:125px;border-radius:50%;
+ background:#ffffff20;border:2px solid #ffffff55;
+ touch-action:none;
 }
-h2,h3{font-family:Orbitron,sans-serif}
-h2{color:#ff8bd5;font-size:19px}
-.small{color:#aaa;font-size:14px}
-.stats{display:flex;justify-content:space-around;text-align:center}
-.stat strong{display:block;color:#ff8bd5;font:700 21px Orbitron}
-.mission{
- border-left:3px solid #ff58bb;
- background:#1b1930;padding:17px;
- margin:14px 0;border-radius:5px;
+#stick{
+ position:absolute;left:36px;top:36px;
+ width:49px;height:49px;border-radius:50%;
+ background:#ff83cc;border:2px solid white;
+ box-shadow:0 0 15px #ff48b5;
 }
-.mission h3{font-size:15px;color:#ff9bd6}
-.mission p{color:#ddd;font-size:17px}
-.mission button{width:100%;font-size:11px}
-.locked{opacity:.45}
-.choice{
- display:block;width:100%;margin:10px 0;
- background:#24213c;border:1px solid #615080;
- text-align:left;font-family:Rajdhani,sans-serif;
- font-size:17px;
+.action{
+ position:fixed;bottom:45px;right:25px;
+ width:85px;height:85px;border-radius:50%;
+ padding:0;font-size:12px;
 }
-#game{display:none}
-#message{color:#ff9bd6;min-height:25px}
-footer{text-align:center;color:#888;padding:20px;font-size:14px}
+#run{
+ position:fixed;bottom:140px;right:27px;
+ width:65px;height:65px;border-radius:50%;
+ background:#292344dd;border:2px solid #ff83cc;
+ color:white;font-weight:bold;
+}
+#character{
+ position:fixed;top:18px;right:15px;
+ background:#111a;border:1px solid #ff83cc;
+ color:white;padding:9px 12px;border-radius:5px;
+}
+#hint{
+ position:fixed;bottom:12px;left:50%;
+ transform:translateX(-50%);
+ font-size:11px;color:white;
+ background:#111a;padding:7px 10px;
+ white-space:nowrap;
+}
+#toast{
+ position:fixed;top:43%;left:50%;
+ transform:translate(-50%,-50%);
+ background:#111d;padding:15px 22px;
+ border:1px solid #ff83cc;border-radius:8px;
+ display:none;text-align:center;
+}
 </style>
 </head>
+
 <body>
+<div id="game"></div>
 
-<section class="hero" id="home">
- <div class="tag">A SPECIAL EDITION • 2026</div>
- <h1>RIYAN:<br><span>VICE CITY</span><br>STORIES</h1>
- <p class="subtitle">ONE PLAYER. THREE MISSIONS. ONE LEGEND.</p>
- <p>Welcome to your own world, Riyan.</p>
- <button onclick="startGame()">START YOUR ADVENTURE →</button>
- <p class="small">A secret world created just for you.</p>
-</section>
+<div id="hud">
+ <div class="logo">VICE <span>CITY</span></div>
+ <div>RIYAN'S EDITION 🎮</div>
+</div>
 
-<main id="game">
- <div class="panel">
-  <div class="small">PLAYER PROFILE</div>
-  <h2>♛ RIYAN</h2>
-  <div class="stats">
-   <div class="stat"><strong id="done">0/3</strong><span>MISSIONS</span></div>
-   <div class="stat"><strong>01</strong><span>PLAYER</span></div>
-   <div class="stat"><strong>∞</strong><span>DREAMS</span></div>
-  </div>
- </div>
+<div id="mission">
+ <strong>MISSION 01</strong><br>
+ Welcome to Vice City<br>
+ <span id="objective">Reach the glowing marker.</span>
+</div>
 
- <div class="panel">
-  <h2>YOUR STORY BEGINS</h2>
-  <p>Vice City is waiting. Complete all three missions to unlock your special reward.</p>
- </div>
+<button id="character" onclick="switchCharacter()">JASON / LUCIA</button>
 
- <div class="mission" id="m1">
-  <div class="small">MISSION 01 • THE DREAM</div>
-  <h3>THE GAMING DREAM 🎮</h3>
-  <p>What's your dream gaming setup?</p>
-  <button class="choice" onclick="answer(1,'PS5 + GTA 6. Obviously!')">A. PS5 + GTA 6 🔥</button>
-  <button class="choice" onclick="answer(1,'A complete gaming setup!')">B. A complete gaming setup</button>
-  <button class="choice" onclick="answer(1,'All the games in the world!')">C. Every game in the world</button>
-  <p class="small" id="r1"></p>
- </div>
+<div id="controls">
+ <div id="joystick"><div id="stick"></div></div>
+ <button id="run">RUN</button>
+ <button class="action" id="act">ACTION</button>
+ <div id="hint">Drag screen to rotate camera</div>
+</div>
 
- <div class="mission locked" id="m2">
-  <div class="small">MISSION 02 • THE CHOICE</div>
-  <h3>THE ULTIMATE CHALLENGE ⚡</h3>
-  <p>Choose your destination.</p>
-  <button class="choice" onclick="answer(2,'Vice City at sunset!')">A. Vice City at sunset</button>
-  <button class="choice" onclick="answer(2,'A midnight street race!')">B. A midnight street race</button>
-  <button class="choice" onclick="answer(2,'A secret luxury mansion!')">C. A secret luxury mansion</button>
-  <p class="small" id="r2"></p>
- </div>
+<div id="toast"></div>
 
- <div class="mission locked" id="m3">
-  <div class="small">MISSION 03 • THE FINAL TEST</div>
-  <h3>WHO MADE THIS GAME? ❤️</h3>
-  <p>Who secretly created this whole world for you?</p>
-  <button class="choice" onclick="answer(3,'Hani ❤️')">A. Hani ❤️</button>
-  <button class="choice" onclick="answer(3,'A game developer')">B. A game developer</button>
-  <button class="choice" onclick="answer(3,'Rockstar')">C. Rockstar</button>
-  <p class="small" id="r3"></p>
- </div>
+<div id="start">
+ <div style="letter-spacing:5px">A NEW CITY. A NEW STORY.</div>
+ <h1>VICE CITY<br>STORIES</h1>
+ <p>PLAYER: RIYAN<br>
+ Explore the city. Complete your mission.<br>
+ Your adventure begins now.</p>
+ <button onclick="begin()">ENTER GAME</button>
+ <p style="font-size:11px">THIRD PERSON • OPEN CITY • MOBILE GAME</p>
+</div>
 
- <div class="panel" id="reward" style="display:none;text-align:center">
-  <div class="tag">ALL MISSIONS COMPLETED</div>
-  <h2>🏆 YOU DID IT, RIYAN!</h2>
-  <h3 style="color:#ff9bd6">THE SECRET REWARD</h3>
-  <p style="font-size:20px;line-height:1.6">
-   You wanted a PS5 and GTA 6.<br>
-   I couldn't buy them for you today,
-   but I wanted to create a little world
-   that belongs only to you.
-  </p>
-  <p style="font-size:23px;color:#ff8bd5">You are my favourite player. ❤️</p>
-  <p>Keep dreaming. One day, may you get everything you've wished for.</p>
-  <h3>WITH LOVE, HANI</h3>
-  <p class="small">Your biggest supporter, always.</p>
- </div>
- <p id="message"></p>
- <footer>RIYAN: VICE CITY STORIES • MADE WITH ❤️ BY HANI</footer>
-</main>
+<script type="module">
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
 
-<script>
-let completed = [];
-let answers = {};
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x8c85bb);
+scene.fog=new THREE.Fog(0x8c85bb,45,150);
 
-function startGame(){
- document.getElementById('home').style.display='none';
- document.getElementById('game').style.display='block';
- window.scrollTo(0,0);
+const camera=new THREE.PerspectiveCamera(
+65,innerWidth/innerHeight,.1,250
+);
+
+const renderer=new THREE.WebGLRenderer({
+antialias:true,powerPreference:'high-performance'
+});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.getElementById('game').appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xc9d8ff,0x46334a,2));
+
+const sun=new THREE.DirectionalLight(0xffe0c0,2.5);
+sun.position.set(-30,50,30);
+sun.castShadow=true;
+scene.add(sun);
+
+function material(color,rough=.8){
+return new THREE.MeshStandardMaterial({
+color,roughness:rough
+});
 }
 
-function answer(n,choice){
- if(completed.includes(n))return;
+function cube(w,h,d,color,x,y,z){
+const m=new THREE.Mesh(
+new THREE.BoxGeometry(w,h,d),material(color)
+);
+m.position.set(x,y,z);
+m.castShadow=true;
+m.receiveShadow=true;
+scene.add(m);
+return m;
+}
 
- answers[n]=choice;
- completed.push(n);
+// Ground and city roads
+cube(200,.5,200,0x55505c,0,-.35,0);
 
- document.getElementById('r'+n).textContent=
- "MISSION COMPLETE ✓ Your choice: "+choice;
+for(let i=-4;i<=4;i++){
+ cube(7,.04,200,0x252631,i*22,-.07,0);
+ cube(200,.04,7,0x252631,0,-.06,i*22);
 
- document.getElementById('done').textContent=
- completed.length+"/3";
-
- if(n<3){
-  let next=document.getElementById('m'+(n+1));
-  next.classList.remove('locked');
-  next.scrollIntoView({behavior:'smooth',block:'center'});
-  document.getElementById('message').textContent=
-   "MISSION UNLOCKED! Keep going, player.";
- }else{
-  document.getElementById('reward').style.display='block';
-  document.getElementById('message').textContent=
-   "ALL MISSIONS COMPLETE. LEGEND STATUS UNLOCKED!";
-  document.getElementById('reward').scrollIntoView({
-   behavior:'smooth',block:'center'
-  });
+ for(let j=-8;j<=8;j++){
+  cube(.13,.02,2.5,0xe5d7a1,i*22,-.035,j*12);
+  cube(2.5,.02,.13,0xe5d7a1,j*12,-.034,i*22);
  }
 }
+
+// Buildings
+const colors=[
+0x92718c,0x6a7797,0xb28b84,
+0x596d83,0x957b9d,0xc09b83,
+0x526b70,0x786b85
+];
+
+for(let x=-5;x<=5;x++){
+ for(let z=-5;z<=5;z++){
+  if(Math.abs(x)%2===0 && Math.abs(z)%2===0)continue;
+  if(Math.abs(x*22)<10 || Math.abs(z*22)<10)continue;
+
+  const h=5+Math.random()*19;
+  const w=7+Math.random()*5;
+  const d=7+Math.random()*5;
+
+  cube(w,h,d,colors[Math.floor(Math.random()*colors.length)],
+       x*22,-.1+h/2,z*22);
+
+  // Window strips
+  for(let yy=2;yy<h-1;yy+=3){
+   cube(w*.7,.45,.08,0xffdba0,
+        x*22,yy,z*22+d/2+.045);
+  }
+ }
+}
+
+// Palm trees
+function palm(x,z){
+ cube(.45,5,.45,0x765039,x,2.5,z);
+
+ for(let i=0;i<6;i++){
+  const a=i*Math.PI/3;
+  const leaf=cube(.25,.18,3,0x27866c,x,5,z);
+  leaf.rotation.y=a;
+  leaf.rotation.x=-.35;
+ }
+}
+
+for(let x=-5;x<=5;x++){
+ for(let z=-5;z<=5;z++){
+  if(Math.abs(x*22)<12 || Math.abs(z*22)<12)continue;
+  if((x+z)%2===0)palm(x*22+7,z*22+7);
+ }
+}
+
+// Custom player characters
+let player,characterType='JASON';
+let playerAngle=Math.PI;
+
+function makePlayer(type){
+ const g=new THREE.Group();
+ const skin=material(type==='JASON'?0xd59b75:0xb87859);
+ const shirt=material(type==='JASON'?0x75a9a6:0x24243b);
+ const pants=material(type==='JASON'?0x28354a:0x34333b);
+ const hair=material(type==='JASON'?0x38251e:0x19141b);
+
+ const body=cube(.85,1.05,.45,0xffffff,0,0,0);
+ body.material=shirt;
+ body.position.set(0,1.65,0);
+ g.add(body);
+
+ const head=new THREE.Mesh(
+ new THREE.SphereGeometry(.29,16,12),skin
+ );
+ head.position.set(0,2.45,0);
+ g.add(head);
+
+ const hairmesh=new THREE.Mesh(
+ new THREE.SphereGeometry(.30,16,8,0,Math.PI*2,0,Math.PI/2),
+ hair
+ );
+ hairmesh.position.set(0,2.54,0);
+ g.add(hairmesh);
+
+ for(const x of [-.25,.25]){
+  const leg=cube(.27,.85,.3,0xffffff,0,0,0);
+  leg.material=pants;
+  leg.position.set(x,.65,0);
+  g.add(leg);
+
+  const arm=cube(.23,.9,.25,0xffffff,0,0,0);
+  arm.material=shirt;
+  arm.position.set(x*1.9,1.65,0);
+  g.add(arm);
+ }
+
+ g.position.set(0,0,0);
+ scene.add(g);
+ return g;
+}
+
+player=makePlayer(characterType);
+
+function switchCharacter(){
+ scene.remove(player);
+ characterType=characterType==='JASON'?'LUCIA':'JASON';
+ player=makePlayer(characterType);
+ player.rotation.y=playerAngle;
+ showToast('PLAYER: '+characterType);
+}
+
+// Mission markers
+const missions=[
+ {x:0,z:-30,name:'MEET YOUR CONTACT'},
+ {x:38,z:-38,name:'EXPLORE VICE CITY'},
+ {x:-40,z:-18,name:'THE FINAL DESTINATION'}
+];
+
+let currentMission=0;
+const markerGroup=new THREE.Group();
+scene.add(markerGroup);
+
+function createMarker(){
+ markerGroup.clear();
+ const m=missions[currentMission];
+
+ const ring=new THREE.Mesh(
+ new THREE.TorusGeometry(2,.18,8,36),
+ new THREE.MeshBasicMaterial({color:0xff52c3})
+ );
+ ring.rotation.x=Math.PI/2;
+ ring.position.set(m.x,.25,m.z);
+ markerGroup.add(ring);
+
+ const beam=new THREE.Mesh(
+ new THREE.CylinderGeometry(.15,.15,5,12,1,true),
+ new THREE.MeshBasicMaterial({
+ color:0xff52c3,transparent:true,opacity:.3
+ })
+ );
+ beam.position.set(m.x,2.5,m.z);
+ markerGroup.add(beam);
+}
+
+createMarker();
+
+// Movement
+let joyX=0,joyY=0,running=false,playing=false;
+let cameraYaw=0;
+let cameraPitch=.25;
+let lastTime=0;
+
+const joy=document.getElementById('joystick');
+const stick=document.getElementById('stick');
+
+joy.addEventListener('pointerdown',e=>{
+ joy.setPointerCapture(e.pointerId);
+ moveJoy(e);
+});
+
+joy.addEventListener('pointermove',e=>{
+ if(e.buttons)moveJoy(e);
+});
+
+function moveJoy(e){
+ const r=joy.getBoundingClientRect();
+ const cx=r.left+r.width/2;
+ const cy=r.top+r.height/2;
+ let x=e.clientX-cx;
+ let y=e.clientY-cy;
+ const length=Math.hypot(x,y);
+ const max=43;
+
+ if(length>max){x=x/length*max;y=y/length*max;}
+
+ joyX=x/max;
+ joyY=y/max;
+ stick.style.transform=`translate(${x}px,${y}px)`;
+}
+
+function resetJoy(){
+ joyX=0;joyY=0;
+ stick.style.transform='translate(0,0)';
+}
+joy.addEventListener('pointerup',resetJoy);
+joy.addEventListener('pointercancel',resetJoy);
+
+document.getElementById('run').addEventListener('pointerdown',()=>{
+ running=true;
+});
+document.getElementById('run').addEventListener('pointerup',()=>{
+ running=false;
+});
+document.getElementById('run').addEventListener('pointercancel',()=>{
+ running=false;
+});
+
+// Camera swipe
+let drag=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{
+ drag=true;lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(!drag||!playing)return;
+ const dx=e.clientX-lastX;
+ const dy=e.clientY-lastY;
+ cameraYaw-=dx*.006;
+ cameraPitch=Math.max(-.1,Math.min(.65,cameraPitch+dy*.003));
+ lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener('pointerup',()=>drag=false);
+renderer.domElement.addEventListener('pointercancel',()=>drag=false);
+
+// Mission action
+function showToast(msg){
+ const el=document.getElementById('toast');
+ el.textContent=msg;
+ el.style.display='block';
+ setTimeout(()=>el.style.display='none',2200);
+}
+
+document.getElementById('act').onclick=()=>{
+ if(!playing)return;
+ const m=missions[currentMission];
+ const dist=Math.hypot(player.position.x-m.x,player.position.z-m.z);
+
+ if(dist<4){
+  showToast('MISSION COMPLETE ✓');
+  currentMission++;
+
+  if(currentMission>=missions.length){
+   document.getElementById('objective').textContent=
+   'VICE CITY IS YOURS. LEGEND STATUS!';
+   showToast('ALL MISSIONS COMPLETE! RIYAN!');
+   markerGroup.clear();
+  }else{
+   document.getElementById('objective').textContent=
+   missions[currentMission].name;
+   createMarker();
+  }
+ }else{
+  showToast('GO TO THE GLOWING MARKER');
+ }
+};
+
+function begin(){
+ document.getElementById('start').style.display='none';
+ document.getElementById('controls').style.display='block';
+ playing=true;
+ showToast('WELCOME TO VICE CITY');
+}
+
+// Main game loop
+function animate(time){
+ requestAnimationFrame(animate);
+ const dt=Math.min((time-lastTime)/1000,.05);
+ lastTime=time;
+
+ if(playing){
+  const forward=new THREE.Vector3(
+   -Math.sin(cameraYaw),0,-Math.cos(cameraYaw)
+  );
+  const right=new THREE.Vector3(
+   Math.cos(cameraYaw),0,-Math.sin(cameraYaw)
+  );
+
+  const direction=new THREE.Vector3()
+    .addScaledVector(right,joyX)
+    .addScaledVector(forward,-joyY);
+
+  if(direction.length()>1)direction.normalize();
+
+  const speed=running?10:5;
+
+  if(direction.lengthSq()>.01){
+   player.position.addScaledVector(direction,speed*dt);
+   playerAngle=Math.atan2(direction.x,direction.z);
+   player.rotation.y=playerAngle;
+  }
+
+  const distance=9;
+  const desired=new THREE.Vector3(
+   player.position.x+Math.sin(cameraYaw)*distance,
+   player.position.y+4.2+cameraPitch*5,
+   player.position.z+Math.cos(cameraYaw)*distance
+  );
+
+  camera.position.lerp(desired,.12);
+  camera.lookAt(player.position.x,1.5,player.position.z);
+
+  const m=missions[currentMission];
+  if(m){
+   const d=Math.hypot(player.position.x-m.x,
+                      player.position.z-m.z);
+   document.getElementById('objective').textContent=
+    d<4?'Press ACTION to complete mission':
+    'Reach the glowing marker • '+Math.round(d)+'m';
+  }
+
+  markerGroup.rotation.y+=dt*.5;
+ }
+
+ renderer.render(scene,camera);
+}
+
+camera.position.set(0,5,10);
+camera.lookAt(0,1,0);
+requestAnimationFrame(animate);
+
+window.addEventListener('resize',()=>{
+ camera.aspect=innerWidth/innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(innerWidth,innerHeight);
+});
 </script>
 </body>
 </html>
