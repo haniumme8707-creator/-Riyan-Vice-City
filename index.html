@@ -336,78 +336,83 @@ const stick=document.getElementById('stick');
 
 let joyActive = false;
 
-joy.addEventListener('pointerdown',e=>{
+
+// MOBILE JOYSTICK
+let joyActive = false;
+let joyPointer = null;
+
+joy.addEventListener('pointerdown', e => {
   e.preventDefault();
   joyActive = true;
+  joyPointer = e.pointerId;
   joy.setPointerCapture(e.pointerId);
   moveJoy(e);
 });
 
-joy.addEventListener('pointermove',e=>{
-  if(joyActive) moveJoy(e);
+joy.addEventListener('pointermove', e => {
+  if (joyActive && e.pointerId === joyPointer) {
+    e.preventDefault();
+    moveJoy(e);
+  }
 });
 
-joy.addEventListener('pointerup',()=>{
+function moveJoy(e) {
+  const r = joy.getBoundingClientRect();
+  let x = e.clientX - (r.left + r.width / 2);
+  let y = e.clientY - (r.top + r.height / 2);
+  const max = 43;
+  const len = Math.hypot(x, y);
+
+  if (len > max) {
+    x = x / len * max;
+    y = y / len * max;
+  }
+
+  joyX = x / max;
+  joyY = y / max;
+  stick.style.transform = `translate(${x}px,${y}px)`;
+}
+
+function resetJoy() {
   joyActive = false;
-  resetJoy();
-});
-
-joy.addEventListener('pointercancel',()=>{
-  joyActive = false; 
-  resetJoy();
-});
-
-function moveJoy(e){
- const r=joy.getBoundingClientRect();
- const cx=r.left+r.width/2;
- const cy=r.top+r.height/2;
- let x=e.clientX-cx;
- let y=e.clientY-cy;
- const length=Math.hypot(x,y);
- const max=43;
-
- if(length>max){x=x/length*max;y=y/length*max;}
-
- joyX=x/max;
- joyY=y/max;
- stick.style.transform=`translate(${x}px,${y}px)`;
+  joyPointer = null;
+  joyX = 0;
+  joyY = 0;
+  stick.style.transform = 'translate(0px,0px)';
 }
 
-function resetJoy(){
- joyX=0;joyY=0;
- stick.style.transform='translate(0,0)';
-}
-joy.addEventListener('pointerup',resetJoy);
-joy.addEventListener('pointercancel',resetJoy);
+joy.addEventListener('pointerup', resetJoy);
+joy.addEventListener('pointercancel', resetJoy);
 
-document.getElementById('run').addEventListener('pointerdown',()=>{
- running=true;
-});
-document.getElementById('run').addEventListener('pointerup',()=>{
- running=false;
-});
-document.getElementById('run').addEventListener('pointercancel',()=>{
- running=false;
+// RUN BUTTON
+const runButton = document.getElementById('run');
+
+runButton.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  running = true;
 });
 
-// Camera swipe
-// Mobile camera swipe
+runButton.addEventListener('pointerup', () => running = false);
+runButton.addEventListener('pointercancel', () => running = false);
+runButton.addEventListener('pointerleave', () => running = false);
+
+// CAMERA SWIPE
 let drag = false;
 let lastX = 0;
 let lastY = 0;
 
 renderer.domElement.style.touchAction = 'none';
 
-renderer.domElement.addEventListener('pointerdown',e=>{
-  if(!playing) return;
+renderer.domElement.addEventListener('pointerdown', e => {
+  if (!playing) return;
   drag = true;
   lastX = e.clientX;
   lastY = e.clientY;
   renderer.domElement.setPointerCapture(e.pointerId);
 });
 
-renderer.domElement.addEventListener('pointermove',e=>{
-  if(!drag || !playing) return;
+renderer.domElement.addEventListener('pointermove', e => {
+  if (!drag || !playing) return;
 
   const dx = e.clientX - lastX;
   const dy = e.clientY - lastY;
@@ -415,20 +420,21 @@ renderer.domElement.addEventListener('pointermove',e=>{
   cameraYaw -= dx * 0.006;
   cameraPitch = Math.max(
     -0.1,
-    Math.min(0.65,cameraPitch + dy * 0.003)
+    Math.min(0.65, cameraPitch + dy * 0.003)
   );
 
   lastX = e.clientX;
   lastY = e.clientY;
 });
 
-renderer.domElement.addEventListener('pointerup',()=>{
+renderer.domElement.addEventListener('pointerup', () => {
   drag = false;
 });
 
-renderer.domElement.addEventListener('pointercancel',()=>{
+renderer.domElement.addEventListener('pointercancel', () => {
   drag = false;
 });
+
 
 // Mission action
 function showToast(msg){
