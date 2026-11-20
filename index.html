@@ -334,13 +334,27 @@ let lastTime=0;
 const joy=document.getElementById('joystick');
 const stick=document.getElementById('stick');
 
+let joyActive = false;
+
 joy.addEventListener('pointerdown',e=>{
- joy.setPointerCapture(e.pointerId);
- moveJoy(e);
+  e.preventDefault();
+  joyActive = true;
+  joy.setPointerCapture(e.pointerId);
+  moveJoy(e);
 });
 
 joy.addEventListener('pointermove',e=>{
- if(e.buttons)moveJoy(e);
+  if(joyActive) moveJoy(e);
+});
+
+joy.addEventListener('pointerup',()=>{
+  joyActive = false;
+  resetJoy();
+});
+
+joy.addEventListener('pointercancel',()=>{
+  joyActive = false; 
+  resetJoy();
 });
 
 function moveJoy(e){
@@ -377,20 +391,44 @@ document.getElementById('run').addEventListener('pointercancel',()=>{
 });
 
 // Camera swipe
-let drag=false,lastX=0,lastY=0;
+// Mobile camera swipe
+let drag = false;
+let lastX = 0;
+let lastY = 0;
+
+renderer.domElement.style.touchAction = 'none';
+
 renderer.domElement.addEventListener('pointerdown',e=>{
- drag=true;lastX=e.clientX;lastY=e.clientY;
+  if(!playing) return;
+  drag = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
 });
+
 renderer.domElement.addEventListener('pointermove',e=>{
- if(!drag||!playing)return;
- const dx=e.clientX-lastX;
- const dy=e.clientY-lastY;
- cameraYaw-=dx*.006;
- cameraPitch=Math.max(-.1,Math.min(.65,cameraPitch+dy*.003));
- lastX=e.clientX;lastY=e.clientY;
+  if(!drag || !playing) return;
+
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+
+  cameraYaw -= dx * 0.006;
+  cameraPitch = Math.max(
+    -0.1,
+    Math.min(0.65,cameraPitch + dy * 0.003)
+  );
+
+  lastX = e.clientX;
+  lastY = e.clientY;
 });
-renderer.domElement.addEventListener('pointerup',()=>drag=false);
-renderer.domElement.addEventListener('pointercancel',()=>drag=false);
+
+renderer.domElement.addEventListener('pointerup',()=>{
+  drag = false;
+});
+
+renderer.domElement.addEventListener('pointercancel',()=>{
+  drag = false;
+});
 
 // Mission action
 function showToast(msg){
